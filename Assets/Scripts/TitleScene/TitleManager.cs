@@ -10,11 +10,13 @@
 //  2026/06/28  作成
 //  2026/07/04  ボタン選択時のSE再生を追加
 //  2026/07/08  SE再生中は入力を受け付けないように変更
+//  2026/09/15  mp4を実行時最初に読み込み始めるように変更
 //
 //-------------------------------------------------------
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 
 public class TitleManager : MonoBehaviour
 {
@@ -29,20 +31,26 @@ public class TitleManager : MonoBehaviour
 
     [SerializeField] private Fade fade;
 
+    [SerializeField] private VideoPlayer videoPlayer;
 
     private bool _isTransitioning = false;  // 遷移中フラグ
 
     private void Start()
     {
+        TitleVideoPlayer.Instance?.Play(() =>
+        {
+            fade.FadeIn(1.0f);
+        });
+
         PlayTitleBGM();
-        fade.FadeIn(1.0f);
     }
+
 
     public void OnClickGameStart()
     {
         if (_isTransitioning) return;
         _isTransitioning = true;
-
+    //    TitleVideoPlayer.Instance?.Stop();
         fade.FadeOut(0.8f);
 
         StartCoroutine(LoadSceneAfterSE("GameScene"));
@@ -85,5 +93,12 @@ public class TitleManager : MonoBehaviour
             bgmAudioSource.loop = true;
             bgmAudioSource.Play();
         }
+    }
+
+    private void OnPrepareCompleted(VideoPlayer vp)
+    {
+        //動画の準備が完了してからフェードイン開始
+        fade.FadeIn(1.0f);
+        vp.Play();
     }
 }

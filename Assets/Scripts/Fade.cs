@@ -50,4 +50,5 @@ public sealed class Fade : MonoBehaviour
     {
         StartCoroutine(ChangeAlphaValueFrom0To1OverTime(duration, on_completed));
     }
+
 }

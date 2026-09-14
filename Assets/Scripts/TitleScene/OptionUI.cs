@@ -7,7 +7,8 @@
 //
 //  更新履歴
 //
-//  2026/07/04  作成  
+//  2026/07/04  作成
+//  2026/09/15  BGMのスライダーを動かした時にSEと違い音を鳴らしていなかったのでSEの音を確認用に再生するように変更。
 //
 //--------------------------------------
 using UnityEngine;
@@ -59,6 +60,15 @@ public class OptionUI : MonoBehaviour
         seEntry.eventID = EventTriggerType.PointerUp;
         seEntry.callback.AddListener((data) => titleManager?.PlayButtonSE());
         seTrigger.triggers.Add(seEntry);
+
+        // BGMスライダーのPointerUp
+        bgmSlider.gameObject.AddComponent<EventTrigger>();
+        EventTrigger bgmTrigger = bgmSlider.GetComponent<EventTrigger>();
+        EventTrigger.Entry bgmEntry = new EventTrigger.Entry();
+        bgmEntry.eventID = EventTriggerType.PointerUp;
+        bgmEntry.callback.AddListener((data) => titleManager?.PlayButtonSE());
+        bgmTrigger.triggers.Add(bgmEntry);
+
 
     }
 

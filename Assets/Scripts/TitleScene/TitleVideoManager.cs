@@ -26,8 +26,8 @@ public class TitleVideoPlayer : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            // URL方式をやめてVideoClip方式に戻す
-            videoPlayer.source = VideoSource.VideoClip;
+            videoPlayer.source = VideoSource.Url;
+            videoPlayer.url = System.IO.Path.Combine(Application.streamingAssetsPath, "title.mp4");
             videoPlayer.prepareCompleted += OnPrepared;
             videoPlayer.Prepare();
         }
@@ -42,7 +42,14 @@ public class TitleVideoPlayer : MonoBehaviour
     private void OnPrepared(VideoPlayer vp)
     {
         vp.Play();
-        StartCoroutine(WaitAndInvoke());
+        StartCoroutine(WaitFrames());
+    }
+
+    private IEnumerator WaitFrames()
+    {
+        yield return new WaitForSeconds(0.1f);  // 数フレーム待つ
+        _onReady?.Invoke();
+        _onReady = null;
     }
 
     private IEnumerator WaitAndInvoke()

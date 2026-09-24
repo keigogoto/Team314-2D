@@ -39,7 +39,7 @@ public class TitleManager : MonoBehaviour
     {
         TitleVideoPlayer.Instance?.Play(() =>
         {
-            fade.FadeIn(1.0f);
+            fade.FadeIn(2.0f);  // フェードインを長めに
         });
 
         PlayTitleBGM();
@@ -101,4 +101,6 @@ public class TitleManager : MonoBehaviour
         fade.FadeIn(1.0f);
         vp.Play();
     }
+
+
 }

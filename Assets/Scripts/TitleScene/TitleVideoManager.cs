@@ -42,34 +42,25 @@ public class TitleVideoPlayer : MonoBehaviour
     private void OnPrepared(VideoPlayer vp)
     {
         vp.Play();
-        StartCoroutine(WaitFrames());
-    }
-
-    private IEnumerator WaitFrames()
-    {
-        yield return new WaitForSeconds(0.1f);  // 数フレーム待つ
-        _onReady?.Invoke();
+        StartCoroutine(WaitFrames(_onReady));
         _onReady = null;
     }
 
-    private IEnumerator WaitAndInvoke()
+    private IEnumerator WaitFrames(System.Action onReady)
     {
-        yield return new WaitForEndOfFrame();  // 1フレーム待って動画が映ってからフェードイン
-        _onReady?.Invoke();
-        _onReady = null;
+        yield return new WaitForSeconds(0.1f);
+        onReady?.Invoke();
     }
 
     public void Play(System.Action onReady = null)
     {
         if (videoPlayer.isPrepared)
         {
-            // 準備済みならそのまま再生
             videoPlayer.Play();
-            onReady?.Invoke();
+            StartCoroutine(WaitFrames(onReady));
         }
         else
         {
-            // 準備できていない場合だけPrepareする
             videoPlayer.Stop();
             videoPlayer.prepareCompleted -= OnPrepared;
             _onReady = onReady;

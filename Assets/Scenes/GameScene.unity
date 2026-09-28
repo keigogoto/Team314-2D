@@ -41124,6 +41124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShout
   shoutPrefab: {fileID: 178532259022559108, guid: 9152824dbfba78a44bd6f4db1ced5ad6, type: 3}
   shoutCoolTime: 3
+  shoutEffectPrefab: {fileID: 1485906348813251053, guid: ccaf907310c11e443a485088d39efe09, type: 3}
 --- !u!95 &2053118866
 Animator:
   serializedVersion: 7

@@ -43,23 +43,23 @@ public class PlayerShout : MonoBehaviour
         }
     }
 
-    private void OnShout(InputValue value)
-    {
-        if (_coolTimer > 0f) return;
-        _coolTimer = shoutCoolTime;
+    //private void OnShout(InputValue value)
+    //{
+    //    if (_coolTimer > 0f) return;
+    //    _coolTimer = shoutCoolTime;
 
-        Vector3 direction = _playerController.LastMoveDirection;
+    //    Vector3 direction = _playerController.LastMoveDirection;
 
-        // XZ平面での角度を計算
-        float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        GameObject shout = Instantiate(shoutPrefab, transform.position, Quaternion.Euler(0, angle, 0));
-        shout.GetComponent<ShoutProjectile>().SetDirection(direction);
+    //    // XZ平面での角度を計算
+    //    float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+    //    GameObject shout = Instantiate(shoutPrefab, transform.position, Quaternion.Euler(0, angle, 0));
+    //    shout.GetComponent<ShoutProjectile>().SetDirection(direction);
 
-        // エフェクト表示
-        GameObject effectObj = new GameObject("ShoutVisualEffect");
-        ShoutVisualEffect effect = effectObj.AddComponent<ShoutVisualEffect>();
-        effect.Show(transform.position, direction);
+    //    // エフェクト表示
+    //    GameObject effectObj = new GameObject("ShoutVisualEffect");
+    //    ShoutVisualEffect effect = effectObj.AddComponent<ShoutVisualEffect>();
+    //    effect.Show(transform.position, direction);
 
-        Debug.Log("Shout!");
-    }
+    //    Debug.Log("Shout!");
+    //}
 }

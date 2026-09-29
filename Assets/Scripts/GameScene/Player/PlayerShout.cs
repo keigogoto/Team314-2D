@@ -16,14 +16,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
 
-
 public class PlayerShout : MonoBehaviour
 {
     [Tooltip("声の見た目に使うPrefab")]
     [SerializeField] private GameObject shoutPrefab;
     [Tooltip("クールタイム")]
     [SerializeField] private float shoutCoolTime = 3f;
-    [SerializeField] private GameObject shoutEffectPrefab;
 
     private PlayerController _playerController;
     private float _coolTimer;
@@ -45,37 +43,23 @@ public class PlayerShout : MonoBehaviour
         }
     }
 
-    //private void OnShout(InputValue value)
-    //{
-    //    if (_coolTimer > 0f) return;
-    //    _coolTimer = shoutCoolTime;
+    private void OnShout(InputValue value)
+    {
+        if (_coolTimer > 0f) return;
+        _coolTimer = shoutCoolTime;
 
-    //    //Vector3 direction = _playerController.LastMoveDirection;
-    //    Vector3 direction = _playerController.LastMoveDirection;
-    //    direction.y = 0f;
-    //    direction.Normalize();
+        Vector3 direction = _playerController.LastMoveDirection;
 
-    //    // XZ平面での角度を計算
-    //    float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-    //    GameObject shout = Instantiate(shoutPrefab, transform.position, Quaternion.Euler(0, angle, 0));
-    //    shout.GetComponent<ShoutProjectile>().SetDirection(direction);
+        // XZ平面での角度を計算
+        float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        GameObject shout = Instantiate(shoutPrefab, transform.position, Quaternion.Euler(0, angle, 0));
+        shout.GetComponent<ShoutProjectile>().SetDirection(direction);
 
-    //    // エフェクト表示
-    //    GameObject effectObj = new GameObject("ShoutVisualEffect");
-    //    ShoutVisualEffect effect = effectObj.AddComponent<ShoutVisualEffect>();
-    //    effect.Show(transform.position, direction);
+        // エフェクト表示
+        GameObject effectObj = new GameObject("ShoutVisualEffect");
+        ShoutVisualEffect effect = effectObj.AddComponent<ShoutVisualEffect>();
+        effect.Show(transform.position, direction);
 
-    //    if (shoutEffectPrefab != null)
-    //    {
-    //        GameObject effect1 = Instantiate(
-    //            shoutEffectPrefab,
-    //            transform.position,
-    //            Quaternion.LookRotation(direction)
-    //        );
-
-    //        Destroy(effect1, 2f);
-    //    }
-
-    //    Debug.Log("Shout!");
-    //}
+        Debug.Log("Shout!");
+    }
 }

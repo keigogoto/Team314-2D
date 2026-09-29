@@ -1,5 +1,4 @@
-﻿
-//-------------------------------------------------------
+﻿//-------------------------------------------------------
 //
 //  EnemyGroupController.cs
 //
@@ -9,7 +8,9 @@
 //  更新履歴
 //
 //  2026/05/19  作成
+//
 //  2026/05/20  集団の数が多いほど移動速度が落ちるように
+//
 //  2026/07/06  3D対応。Vector2→Vector3に変更。
 //
 //-------------------------------------------------------
@@ -31,6 +32,8 @@ public class EnemyGroupController : MonoBehaviour
     [SerializeField] private float groupWanderInterval = 3f;
 
     [Header("グループ合流・UI設定")]
+    [Tooltip("このグループはシャウトでのみ発見状態になる")]
+    [SerializeField] private bool shoutOnly = false;
     [SerializeField] private float mergeRadius = 4f;
     [SerializeField] private TMPro.TextMeshProUGUI countText;
     public List<EnemyController> Enemies => _enemies;
@@ -42,17 +45,17 @@ public class EnemyGroupController : MonoBehaviour
     [Tooltip("HPバーのオフセット")]
     [SerializeField] private Vector3 hpBarOffset = new Vector3(0, -1.0f, 0);
 
+    public bool IsShoutOnly => shoutOnly;
     private float _initialGroupMaxHp = 0f;
     private GameObject _spawnedHpBar;
     private Image _hpBarFillImage;
 
-    private Vector3 _groupWanderTarget;
+    private Vector3 _groupWanderTarget;                         
     private float _groupWanderTimer;
-    private Vector3 _groupOrigin;
+    private Vector3 _groupOrigin;                               
 
     private bool _isDiscovered;
     private List<EnemyController> _enemies = new List<EnemyController>();
-
     private void Start()
     {
         _initialGroupMaxHp = 0f;
@@ -154,7 +157,7 @@ public class EnemyGroupController : MonoBehaviour
         {
             if (enemy == null) continue;
 
-            Vector3 toCenter = groupCenter - enemy.transform.position;
+            Vector3 toCenter = groupCenter - enemy.transform.position;  
             float distanceToCenter = toCenter.magnitude;
 
             if (distanceToCenter > 2.0f)
@@ -164,11 +167,11 @@ public class EnemyGroupController : MonoBehaviour
         }
     }
 
-    private Vector3 GetNewGroupWanderTarget()
+    private Vector3 GetNewGroupWanderTarget()   
     {
         _groupWanderTimer = groupWanderInterval;
         Vector2 randomCircle = Random.insideUnitCircle * groupWanderRadius;
-        return _groupOrigin + new Vector3(randomCircle.x, 0f, randomCircle.y);
+        return _groupOrigin + new Vector3(randomCircle.x, 0f, randomCircle.y);  // XZ平面に変換
     }
 
     private void DiscoverAll()
@@ -215,6 +218,8 @@ public class EnemyGroupController : MonoBehaviour
         {
             if (otherGroup == this || otherGroup.Enemies.Count == 0) continue;
 
+            if (this.shoutOnly != otherGroup.shoutOnly) continue;
+            //ShoutOnly の設定が違うグループとは合流しない
             float dist = Vector3.Distance(CalcGroupCenter(), otherGroup.CalcGroupCenter());
             if (dist <= mergeRadius)
             {
@@ -242,7 +247,7 @@ public class EnemyGroupController : MonoBehaviour
         }
     }
 
-    public Vector3 CalcGroupCenter()
+    public Vector3 CalcGroupCenter()    
     {
         if (_enemies.Count == 0) return transform.position;
         Vector3 sumPosition = Vector3.zero;
@@ -253,7 +258,7 @@ public class EnemyGroupController : MonoBehaviour
             {
                 if (validCount > 0)
                 {
-                    float distFromCurrentAverage = Vector3.Distance(sumPosition / validCount, enemy.transform.position);
+                    float distFromCurrentAverage = Vector3.Distance(sumPosition / validCount, enemy.transform.position); 
                     if (distFromCurrentAverage > 10f) continue;
                 }
 
@@ -308,7 +313,7 @@ public class EnemyGroupController : MonoBehaviour
             Vector3 targetPosition = new Vector3(
                 enemyPos.x + hpBarOffset.x,
                 enemyPos.y + hpBarOffset.y,
-                enemyPos.z + hpBarOffset.z
+                enemyPos.z + hpBarOffset.z      // Z軸も対応
             );
             _spawnedHpBar.transform.position = targetPosition;
         }

@@ -60,85 +60,58 @@ public class ShoutVisualEffect : MonoBehaviour
         }
     }
 
-
     private void DrawShape(Vector3 origin, Vector3 direction)
     {
-        int fanSegments = 30;
-
-        int totalPoints = fanSegments + 3;
+        int circleSegments = 20;
+        int fanSegments = 20;
+        int totalPoints = circleSegments + 1 + fanSegments + 1 + 1;
         _lineRenderer.positionCount = totalPoints;
 
-        // XZ方向だけを使用
-        direction.y = 0f;
-
-        if (direction.sqrMagnitude < 0.001f)
-        {
-            direction = transform.forward;
-            direction.y = 0f;
-        }
-
-        direction.Normalize();
-
-        // 描画する高さをプレイヤーと完全に同じにする
-        float drawY = origin.y;
-        if (direction.x < -1.0f)
-        {
-            drawY -= 1.0f;
-        }
-        // シャウトの向いている角度
-        float baseAngle =
-            Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-
+        // XZ平面での角度を計算
+        float baseAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
         int index = 0;
 
-        // =========================
-        // プレイヤー位置
-        // =========================
-        Vector3 center = new Vector3(
-            origin.x,
-            drawY,
-            origin.z
-        );
-
-        _lineRenderer.SetPosition(index++, center);
-
-        // =========================
-        // 左端
-        // =========================
-        float leftAngle =
-            (baseAngle + fanAngle / 2f) * Mathf.Deg2Rad;
-
-        Vector3 leftEdge = new Vector3(
-            origin.x + Mathf.Sin(leftAngle) * fanRange,
-            drawY,
-            origin.z + Mathf.Cos(leftAngle) * fanRange
-        );
-
-        _lineRenderer.SetPosition(index++, leftEdge);
-
-        // =========================
-        // 扇形の弧
-        // =========================
-        for (int i = 0; i <= fanSegments; i++)
+        // 後ろの円を描く
+        for (int i = 0; i < circleSegments; i++)
         {
-            float t = (float)i / fanSegments;
-
-            float angle =
-                (baseAngle + fanAngle / 2f - fanAngle * t)
-                * Mathf.Deg2Rad;
-
-            Vector3 point = new Vector3(
-                origin.x + Mathf.Sin(angle) * fanRange,
-                drawY,
-                origin.z + Mathf.Cos(angle) * fanRange
+            float angle = (360f / circleSegments) * i * Mathf.Deg2Rad;
+            Vector3 point = origin + new Vector3(
+                Mathf.Cos(angle) * backCircleRadius,
+                origin.y,
+                Mathf.Sin(angle) * backCircleRadius
             );
-
             _lineRenderer.SetPosition(index++, point);
         }
 
-        // =========================
-        // プレイヤー位置に戻る
-        // =========================
-        _lineRenderer.SetPosition(index++, center);
+        // 扇の左端へ
+        float leftAngle = (baseAngle + fanAngle / 2f) * Mathf.Deg2Rad;
+        Vector3 leftEdge = origin + new Vector3(
+            Mathf.Sin(leftAngle) * fanRange,
+            origin.y,
+            Mathf.Cos(leftAngle) * fanRange
+        );
+        _lineRenderer.SetPosition(index++, leftEdge);
+
+        // 扇の弧を描く
+        for (int i = 0; i <= fanSegments; i++)
+        {
+            float t = (float)i / fanSegments;
+            float angle = (baseAngle + fanAngle / 2f - fanAngle * t) * Mathf.Deg2Rad;
+            Vector3 point = origin + new Vector3(
+                Mathf.Sin(angle) * fanRange,
+                origin.y,
+                Mathf.Cos(angle) * fanRange
+            );
+            _lineRenderer.SetPosition(index++, point);
+        }
+
+        // 扇の右端を円に戻す
+        float rightAngle = (baseAngle - fanAngle / 2f) * Mathf.Deg2Rad;
+        Vector3 rightEdge = origin + new Vector3(
+            Mathf.Sin(rightAngle) * fanRange,
+            origin.y,
+            Mathf.Cos(rightAngle) * fanRange
+        );
+        _lineRenderer.SetPosition(index++, rightEdge);
     }
 }
